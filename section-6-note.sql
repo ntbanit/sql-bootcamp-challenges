@@ -27,4 +27,36 @@ select to_char(now(), 'dd-mm-yyyy'); -- 07-12-2023
 
 /** Mathematical Functions like + - * / ... 
 */
-select round(rental_rate / replacement_cost, 2) * 100 as percent_cost from film ;
+select round(rental_rate / replacement_cost, 2) * 100 as percent_cost from film limit 1;
+
+/** String Funtions and Operations 
+*/
+select length('An');-- 2 
+select first_name || ' ' || last_name from customer limit 1; -- Jared Ely
+select lower(left(first_name, 1) || last_name) || '@gmail.com' as email from customer limit 1; --jely@gmail.com
+
+/**Sub query
+*/
+-- get films have rental_rate > average rental rate 
+select * from film where rental_rate > (select avg(rental_rate) from film);
+
+-- film's titles that been return in some day 
+select film_id, title from film where film_id in 
+(select i.film_id 
+from rental r join inventory i using (inventory_id) 
+where return_date between '2005-05-29' and '2005-05-30'); 
+
+select * from customer c where not exists 
+(select * from payment p where p.customer_id = c.customer_id and amount > 10) ;
+
+
+/** Self-join 
+*/
+-- find all the pairs of films which have same length 
+select f.film_id as id1, other.film_id as id2, 
+f.title as film_title, other.title as other_title, 
+f.length as film_length, other.length as other_length 
+from film f join film other 
+on f.film_id <> other.film_id and f.length = other.length
+where f.length = 117
+;
